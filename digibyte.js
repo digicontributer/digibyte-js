@@ -8807,7 +8807,7 @@ function DigiAsset(data) {
     return new DigiAsset(data);
   }
   $.checkArgument(_.isObject(data), 'Must provide an object from where to extract data');
-  console.log(data[3]);
+  // ToDo
   var decoder = encodingLookup[data[3]]
   JSUtil.defineImmutable(this, {
     address: address,

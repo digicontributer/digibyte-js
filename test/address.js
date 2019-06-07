@@ -487,7 +487,6 @@ describe('Address', function() {
   describe('#inspect', function() {
     it('should output formatted output correctly', function() {
       var address = new Address(str);
-			console.log(str, address);
       var output = '<Address: DKpaaKdg92mKjWPMR7kf5ku9FahL65Wmgi, type: pubkeyhash, network: livenet>';
       address.inspect().should.equal(output);
     });
