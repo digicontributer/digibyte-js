@@ -26,6 +26,8 @@ digibyte.crypto.Signature = require('./lib/crypto/signature');
 
 // encoding
 digibyte.encoding = {};
+digibyte.encoding.bech32 = require('./lib/encoding/bech32');
+digibyte.encoding.bech32Check = require('./lib/encoding/bech32check');
 digibyte.encoding.Base58 = require('./lib/encoding/base58');
 digibyte.encoding.Base58Check = require('./lib/encoding/base58check');
 digibyte.encoding.BufferReader = require('./lib/encoding/bufferreader');

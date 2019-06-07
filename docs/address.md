@@ -33,6 +33,17 @@ A pay-to-script-hash multisignature Address can be instantiated from an array of
 var p2shAddress = new Address([publicKey1, publicKey2, publicKey3], 2);
 ```
 
+A pay-to-witness-public-key-hash Address can be instantiated a [PublicKey](publickey.md), or [PrivateKey](hierarchical.md).
+
+ ```javascript
+var privateKey = new PrivateKey();
+var publicKey = privateKey.toPublicKey();
+ // from a private key
+var address = privateKey.toBech32Address();
+// from a public key
+var address = publicKey.toBech32Address();
+```
+
 ## Validating an Address
 The main use that we expect you'll have for the `Address` class in DigiByte.JS is validating that an address is a valid one, what type of address it is (you may be interested on knowing if the address is a simple "pay to public key hash" address or a "pay to script hash" address) and what network does the address belong to.
 
