@@ -36,6 +36,7 @@ digibyte.encoding.Varint = require('./lib/encoding/varint');
 
 // utilities
 digibyte.util = {};
+digibyte.util.assets = require('./lib/util/assets');
 digibyte.util.buffer = require('./lib/util/buffer');
 digibyte.util.js = require('./lib/util/js');
 digibyte.util.preconditions = require('./lib/util/preconditions');
@@ -44,6 +45,7 @@ digibyte.util.preconditions = require('./lib/util/preconditions');
 digibyte.errors = require('./lib/errors');
 
 // main digibyte library
+digibyte.Asset = require('./lib/asset');
 digibyte.Address = require('./lib/address');
 digibyte.Block = require('./lib/block');
 digibyte.MerkleBlock = require('./lib/block/merkleblock');
