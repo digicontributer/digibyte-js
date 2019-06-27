@@ -62,7 +62,7 @@ This will generate files named `digibyte.js` and `digibyte.min.js`.
 ## Development & Tests
 
 ```sh
-git clone https://github.com/digibyte/digibyte.js
+git clone https://github.com/digicontributer/digibyte-js.git
 cd digibyte.js
 npm install
 ```
