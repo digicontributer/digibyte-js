@@ -15,8 +15,8 @@ var errors = digibyte.errors;
 
 describe('TransactionSignature', function() {
 
-  var fromAddress = 'mszYqVnqKoQx4jcTdJXxwKAissE3Jbrrc1';
-  var privateKey = 'cSBnVM4xvxarwGQuAfQFwqDg9k5tErHUHzgWsEfD4zdwUasvqRVY';
+  var fromAddress = 'sqvLj8RVFxXLmPc2UY7ZSdkidiCkowoFXA';
+  var privateKey = 'eapjRKSpbpuezzEvQTN7pGjXgNTsN5xtTGQ999rQRixcv92L3Nmr';
   var simpleUtxoWith100000Satoshis = {
     address: fromAddress,
     txId: 'a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458',

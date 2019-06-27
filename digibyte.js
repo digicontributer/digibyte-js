@@ -10905,7 +10905,7 @@ Transaction.prototype._newTransaction = function() {
  *
  * ```
  * {
- *  address: 'mszYqVnqKoQx4jcTdJXxwKAissE3Jbrrc1',
+ *  address: 'sqvLj8RVFxXLmPc2UY7ZSdkidiCkowoFXA',
  *  txId: 'a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458',
  *  outputIndex: 0,
  *  script: Script.empty(),

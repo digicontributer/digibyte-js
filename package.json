@@ -87,7 +87,7 @@
     "inherits": "=2.0.1",
     "lodash": "=4.17.11",
     "node-rsa": "latest",
-    "sffc-encoder": "^^0.1.9"
+    "sffc-encoder": "^0.1.9"
   },
   "devDependencies": {
     "digibyte-build": "digibyte-core/digibyte-build",

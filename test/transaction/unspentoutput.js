@@ -11,7 +11,7 @@ var UnspentOutput = digibyte.Transaction.UnspentOutput;
 describe('UnspentOutput', function() {
 
   var sampleData1 = {
-    'address': 'mszYqVnqKoQx4jcTdJXxwKAissE3Jbrrc1',
+    'address': 'sqvLj8RVFxXLmPc2UY7ZSdkidiCkowoFXA',
     'txId': 'a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458',
     'outputIndex': 0,
     'script': 'OP_DUP OP_HASH160 20 0x88d9931ea73d60eaf7e5671efc0552b912911f2a OP_EQUALVERIFY OP_CHECKSIG',
@@ -49,7 +49,7 @@ describe('UnspentOutput', function() {
 
   it('displays nicely on the console', function() {
     var expected = '<UnspentOutput: a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458:0' +
-                   ', satoshis: 1020000, address: mszYqVnqKoQx4jcTdJXxwKAissE3Jbrrc1>';
+                   ', satoshis: 1020000, address: sqvLj8RVFxXLmPc2UY7ZSdkidiCkowoFXA>';
     expect(new UnspentOutput(sampleData1).inspect()).to.equal(expected);
   });
 
