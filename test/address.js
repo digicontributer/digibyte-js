@@ -92,12 +92,28 @@ describe('Address', function() {
     'dgbt1qjrn9t3w2wvayh2fc7nzcwynyjs06cr0ja4mesq'
   ];
 
+  var P2WSHLivenet = [
+    'dgb1q0taf98t6ku0e38dhf3chnt80kurpvkyphjw4eayg7fmwfn0l0mfsqca0qx',
+    'dgb1qg4p9x8jc5gxve8s8q45uq3sm9m4fq0xdfq0vz6x9rsermxg9et2q2u4ul3',
+    'dgb1qeqztplakpus3mhhqmnl7fwjvdgz8k357df0ftc9sejhmlhsej03q5y60e9',
+    'dgb1qkcrtx74pemlhhpagn08e0wnsyxpa9zrswf3lg82s7y83ya993y9s0khj29',
+    'dgb1qxsa7n4rk8tj33y8wjwpjedf7wvucc7t8rmcshr0gq2zc7gc6mt5q8avu63'
+  ];
+
   var P2WPKHTestnet = [
     'dgbt1qcyvjwnsl96uzfs95lu6whw2zwzcga5har0gufc',
     'dgbt1qcssz9q2qkh3gzfsww8cjpz2hxnjkmn597mfkzm',
     'dgbt1qlryp7ecxsjhq0z4n6dz5q7tq8gacqy50a86a0v',
     'dgbt1qg6ndqavjv44m0m3shm2xurey38mv3xq0n07akw',
     'dgbt1qnllsfzf7pkteasvce50wm8qdkx2syud8cqekv9'
+  ];
+
+  var P2WSHTestnet = [
+    'dgbt1qkqx4wnfjqmcdvz3sjr922jj6yk269e2ng2cfn5wkjwcu8vughevshgrs5r',
+    'dgbt1q29fydwxx89pe42ecl7huvcuu2pv4m4xfe8yxcckwhnk0nsfjhk7qk57qx4',
+    'dgbt1qv6ctp2utp499wh3j5as8krhgdd6l8nnqp2q9axleqrkasswlc8dqsjrk33',
+    'dgbt1qxyhj7xly09c26k5a6n5yl495ge4lsud65avgjlve4l7llxelmaaqzacg2a',
+    'dgbt1qh4h70arlhflq3sf3k7k7mg4cwc8ehscq3l5vnysuzml8fsydlafsj9j75f'
   ];
 
   // testnet p2sh
@@ -170,6 +186,13 @@ describe('Address', function() {
       }
     });
 
+    it('validates correctly the P2WSH test vector', function() {
+      for (var i = 0; i < P2WSHLivenet.length; i++) {
+        var error = Address.getValidationError(P2WSHLivenet[i]);
+        should.not.exist(error);
+      }
+    });
+
     it('validates correctly the P2SH testnet test vector', function() {
       for (var i = 0; i < P2SHTestnet.length; i++) {
         var error = Address.getValidationError(P2SHTestnet[i], 'testnet');
@@ -180,6 +203,13 @@ describe('Address', function() {
     it('validates correctly the P2WPKH testnet test vector', function() {
       for (var i = 0; i < P2WPKHTestnet.length; i++) {
         var error = Address.getValidationError(P2WPKHTestnet[i], 'testnet');
+        should.not.exist(error);
+      }
+    });
+
+    it('validates correctly the P2WSH testnet test vector', function() {
+      for (var i = 0; i < P2WSHTestnet.length; i++) {
+        var error = Address.getValidationError(P2WSHTestnet[i], 'testnet');
         should.not.exist(error);
       }
     });
