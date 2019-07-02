@@ -13,7 +13,7 @@ You can also instantiate an Address from a String, [PublicKey](publickey.md), or
 
 ```javascript
 // from a string
-var address = Address.fromString('mwkXG8NnB2snbqWTcpNiK6qqGHm1LebHDc');
+var address = Address.fromString('dgb1qrrx8v0u65t5tnx84tfdlqwja0sq62840d4h7gy');
 
 // a default network address from a public key
 var publicKey = PublicKey(privateKey);
@@ -26,22 +26,29 @@ var publicKey = new PublicKey(privateKey);
 var address = new Address(publicKey, Networks.testnet);
 ```
 
-A pay-to-script-hash multisignature Address can be instantiated from an array of [PublicKeys](publickey.md).
+A pay-to-witness-script-hash multisignature Address can be instantiated from an array of [PublicKeys](publickey.md).
 
 ```javascript
 // a 2-of-3 address from public keys
 var p2shAddress = new Address([publicKey1, publicKey2, publicKey3], 2);
 ```
 
-A pay-to-witness-public-key-hash Address can be instantiated a [PublicKey](publickey.md), or [PrivateKey](hierarchical.md).
+A pay-to-script-hash multisignature Address can be instantiated from an array of [PublicKeys](publickey.md) and by passing true to the legacy arguement.
+
+```javascript
+// a 2-of-3 address from public keys
+var p2shAddress = new Address([publicKey1, publicKey2, publicKey3], 2, 'livenet', true);
+```
+
+A Legacy Address can be instantiated a [PublicKey](publickey.md), or [PrivateKey](hierarchical.md).
 
  ```javascript
 var privateKey = new PrivateKey();
 var publicKey = privateKey.toPublicKey();
  // from a private key
-var address = privateKey.toBech32Address();
+var address = privateKey.toLegacyAddress();
 // from a public key
-var address = publicKey.toBech32Address();
+var address = publicKey.toLegacyAddress();
 ```
 
 ## Validating an Address
@@ -73,4 +80,4 @@ var error = Address.getValidationError(input, Networks.testnet);
 }
 ```
 
-The errors are listed in the generated file in the [errors folder](https://github.com/bitpay/bitcore/tree/master/lib/errors). There's a structure to errors defined in the [spec.js file](https://github.com/bitpay/bitcore/tree/master/lib/errors/spec.js).
+The errors are listed in the generated file in the [errors folder](https://github.com/digicontributer/digibyte-js/tree/master/lib/errors). There's a structure to errors defined in the [spec.js file](https://github.com/digicontributer/digibyte-js/tree/master/lib/errors/spec.js).

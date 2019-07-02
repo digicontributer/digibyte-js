@@ -33,12 +33,12 @@ var livenet = new Network();
 _.extend(livenet, {
   name: 'livenet',
   alias: 'mainnet',
-  pubkeyhash: 0x00,
+  pubkeyhash: 0x1e,
   privatekey: 0x80,
-  scripthash: 0x05,
+  scripthash: 0x3f,
   xpubkey:  0x0488b21e,
   xprivkey: 0x0488ade4,
-  port: 8333
+  port: 12024
 });
 
 var testnet = new Network();

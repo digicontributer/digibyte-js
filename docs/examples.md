@@ -7,6 +7,13 @@ var privateKey = new digibyte.PrivateKey();
 var address = privateKey.toAddress();
 ```
 
+## Generate a random legacy address
+```javascript
+var privateKey = new digibyte.PrivateKey();
+
+var address = privateKey.toLegacyAddress();
+```
+
 ## Generate a address from a SHA256 hash
 ```javascript
 var value = new Buffer('correct horse battery staple');
@@ -29,14 +36,14 @@ var privateKey = new digibyte.PrivateKey('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7V
 var utxo = {
   "txId" : "115e8f72f39fad874cfab0deed11a80f24f967a84079fb56ddf53ea02e308986",
   "outputIndex" : 0,
-  "address" : "17XBj6iFEsf8kzDMGQk5ghZipxX49VXuaV",
+  "address" : "dgb1qrrx8v0u65t5tnx84tfdlqwja0sq62840d4h7gy",
   "script" : "76a91447862fe165e6121af80d5dde1ecb478ed170565b88ac",
   "satoshis" : 50000
 };
 
 var transaction = new digibyte.Transaction()
   .from(utxo)
-  .to('1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK', 15000)
+  .to('dgb1qz93rjfpk976zd2qal32d6zj7ctv9vywn9h7zdq', 15000)
   .sign(privateKey);
 ```
 
@@ -54,7 +61,7 @@ var signature = message.sign(privateKey);
 ```javascript
 var Message = require('digibyte-message');
 
-var address = '13Js7D3q4KvfSqgKN8LpNq57gcahrVc5JZ';
+var address = 'dgb1qz93rjfpk976zd2qal32d6zj7ctv9vywn9h7zdq';
 var signature = 'IBOvIfsAs/da1e36W8kw1cQOPqPVXCW5zJgNQ5kI8m57FycZXdeFmeyoIqJSREzE4W7vfDmdmPk0HokuJPvgPPE=';
 
 var verified = new Message('This is an example of a signed message.').verify(address, signature);
@@ -66,7 +73,7 @@ var privateKey = new digibyte.PrivateKey('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7V
 var utxo = {
   "txId" : "115e8f72f39fad874cfab0deed11a80f24f967a84079fb56ddf53ea02e308986",
   "outputIndex" : 0,
-  "address" : "17XBj6iFEsf8kzDMGQk5ghZipxX49VXuaV",
+  "address" : "dgb1qrrx8v0u65t5tnx84tfdlqwja0sq62840d4h7gy",
   "script" : "76a91447862fe165e6121af80d5dde1ecb478ed170565b88ac",
   "satoshis" : 50000
 };
@@ -108,6 +115,6 @@ var utxo = {
 
 var transaction = new digibyte.Transaction()
     .from(utxo, publicKeys, 2)
-    .to('mtoKs9V381UAhUia3d7Vb9GNak8Qvmcsme', 20000)
+    .to('dgb1qrrx8v0u65t5tnx84tfdlqwja0sq62840d4h7gy', 20000)
     .sign(privateKeys);
 ```

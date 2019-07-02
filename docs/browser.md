@@ -40,7 +40,7 @@ After this, you can include the bundled release versions in your HTML file:
 
   <script type="text/javascript">
     var digibyte = require('digibyte');
-    var Mnemonic = require('bitcore-mnemonic');
+    var Mnemonic = require('digibytejs-mnemonic');
     // etc...
   </script>
 
@@ -57,7 +57,7 @@ browserify --require ./index.js:digibyte | uglifyjs > digibyte.min.js
 ```
 
 ```sh
-browserify --require ./index.js:bitcore-mnemonic --external bitcore-lib | uglifyjs > bitcore-mnemonic.min.js
+browserify --require ./index.js:digibytejs-mnemonic --external digibyte | uglifyjs > digibytejs-mnemonic.min.js
 ```
 
 In many of the modules you can also run the command to build a browser bundle:

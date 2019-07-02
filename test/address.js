@@ -18,7 +18,7 @@ var invalidbase58 = require('./data/bitcoind/base58_keys_invalid.json');
 describe('Address', function() {
 
   var pubkeyhash = new Buffer('4fc51c8162089a7ac14f9a8a1cee366a514c4f3d', 'hex');
-  var buf = Buffer.concat([new Buffer([0]), pubkeyhash]);
+  var buf = Buffer.concat([new Buffer([0x1e]), pubkeyhash]);
   var str = 'DCQt3x2zkmPo67yPQqby3EYmBwUZvW4C68';
 
   it('can\'t build without data', function() {
@@ -36,7 +36,7 @@ describe('Address', function() {
   it('should throw an error because of bad type param', function() {
     (function() {
       return new Address(PKHLivenet[0], 'livenet', 'pubkey');
-    }).should.throw('Third argument must be "pubkeyhash" or "scripthash"');
+    }).should.throw('Third argument must be "pubkeyhash", "scripthash", "witnesspubkeyhash", or "witnessscripthash"');
   });
 
   describe('digibyted compliance', function() {
@@ -307,7 +307,7 @@ describe('Address', function() {
     it('should error because of incorrect length buffer for transform buffer', function() {
       (function() {
         return Address._transformBuffer(new Buffer(20));
-      }).should.throw('Address buffers must be exactly 21 bytes.');
+      }).should.throw('Address buffer is incorrect length.');
     });
 
     it('should error because of incorrect type for pubkey transform', function() {
@@ -564,20 +564,15 @@ describe('Address', function() {
     var publics = [public1, public2, public3];
 
     it('can create an address from a set of public keys', function() {
-      var address = Address.createMultisig(publics, 2, Networks.livenet);
+      var address = Address.createMultisig(publics, 2, Networks.livenet, true);
       address.toString().should.equal('SbVpVj1Zsrog6FrWtn5TpFLhzAjsknJ6YH');
-      address = new Address(publics, 2, Networks.livenet);
+      address = new Address(publics, 2, Networks.livenet, true);
       address.toString().should.equal('SbVpVj1Zsrog6FrWtn5TpFLhzAjsknJ6YH');
     });
 
     it('works on testnet also', function() {
-      var address = Address.createMultisig(publics, 2, Networks.testnet);
+      var address = Address.createMultisig(publics, 2, Networks.testnet, true);
       address.toString().should.equal('yaXGK5xkYkV94dbBn5j19uJHT1aWZnKjWQ');
-    });
-
-    it('can create an address from a set of public keys with a nested witness program', function() {
-      var address = Address.createMultisig(publics, 2, Networks.livenet, true);
-      address.toString().should.equal('SjRJ7tUYfEG8UYBRomnoETC54GA4mayodH');
     });
 
     it('can also be created by Address.createMultisig', function() {
