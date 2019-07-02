@@ -9620,7 +9620,7 @@ Script.prototype.getPublicKey = function() {
 };
 
 Script.prototype.getPublicKeyHash = function() {
-  $.checkState(this.isWitnessPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
+  $.checkState(this.isPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
   return this.chunks[2].buf;
 };
 
