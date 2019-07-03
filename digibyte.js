@@ -47,7 +47,7 @@ var PublicKey = require('./publickey');
  * @returns {Address} A new valid and frozen instance of an Address
  * @constructor
  */
-function Address(data, network, type) {
+function Address(data, network, type, legacy) {
   /* jshint maxcomplexity: 12 */
   /* jshint maxstatements: 20 */
 
@@ -55,7 +55,7 @@ function Address(data, network, type) {
     return new Address(data, network, type);
   }
   if (_.isArray(data) && _.isNumber(network)) {
-    return Address.createMultisig(data, network, type);
+    return Address.createMultisig(data, network, type, legacy);
   }
   if (data instanceof Address) {
     // Immutable instance
@@ -182,7 +182,7 @@ Address._classifyFromVersion = function(buffer, network, prefix) {
     } else {
       throw new TypeError('Invalid buffer length for segwit address')
     }
-    version.network = network;
+    version.network = Networks.get(prefix, 'prefix');;
   } else {
     if (pubkeyhashNetwork) {
       version.network = pubkeyhashNetwork;
@@ -217,9 +217,17 @@ Address._transformBuffer = function(buffer, network, type, prefix) {
     throw new TypeError('Address buffer is incorrect length.');
   }
 
-  network = Networks.get(network);
+  var networkObj = Networks.get(network);
   var bufferVersion = Address._classifyFromVersion(buffer, network, prefix);
-  if (!bufferVersion.network || (network && network !== bufferVersion.network)) {
+
+  if (network && !networkObj) {
+    throw new TypeError('Unknown network');
+  }
+
+  if (!bufferVersion.network || (networkObj && networkObj !== bufferVersion.network)) {
+    if (buffer.toString('hex') === 'bb15e665f7816b6146c7238ce6ea8a511f50b78d') {
+      console.log(bufferVersion, networkObj, 'lsosl')
+    }
     throw new TypeError('Address has mismatched network type.');
   }
 
@@ -292,7 +300,7 @@ Address.createMultisig = function(publicKeys, threshold, network, legacy) {
     info.network = network;
     return new Address(Bech32Check.encode(Buffer.from(words), network.prefix), network);
   }
-  return Address.payingTo(Script.buildWitnessMultisigOutFromScript(redeemScript), network);
+  return Address.payingTo(redeemScript, network);
 };
 
 /**
@@ -311,19 +319,20 @@ Address._transformString = function(data, network, type) {
   if (data.length < 34){
     throw new Error('Invalid Address string provided');
   }
-
   data = data.trim();
   try {
-    network = network || Networks.defaultNetwork
     var result = Bech32.decode(data);
     var version = result.shift();
-    var data = Bech32.fromWords(result);
-    var info = Address._transformBuffer(Buffer.from(data), network, type, network.prefix);
+    var buf = Bech32.fromWords(result);
+    var info = Address._transformBuffer(Buffer.from(buf), Networks.get(network || 'livenet'), type, Networks.get(network || 'livenet').prefix);
     return info;
   } catch (e) {
-      if (type === Address.PayToWitnessPublicKeyHash || type === Address.PayToWitnessScriptHash) {
-        throw e;
-      }
+    if(data === 'dgb1qhv27ve0hs94kz3k8ywxwd6522y04pdud3lq74k'){
+      console.log(Buffer.from(buf).toString('hex'))
+    }
+    if (type === Address.PayToWitnessPublicKeyHash || type === Address.PayToWitnessScriptHash) {
+      return e;
+    }
   }
   var addressBuffer = Base58Check.decode(data);
   var info = Address._transformBuffer(addressBuffer, network, type);
@@ -365,7 +374,7 @@ Address.fromPublicKeyHash = function(hash, network) {
 Address.fromScriptHash = function(hash, network) {
   $.checkArgument(hash, 'hash parameter is required');
   var info = Address._transformHash(hash);
-  return new Address(info.hashBuffer, network, Address.PayToWitnessScriptHash);
+  return new Address(info.hashBuffer, network, Address.PayToScriptHash);
 };
 
 /**
@@ -3294,7 +3303,6 @@ ECDSA.prototype.calci = function() {
     try {
       Qprime = this.toPublicKey();
     } catch (e) {
-      console.error(e);
       continue;
     }
 
@@ -6552,6 +6560,7 @@ function addNetwork(data) {
   JSUtil.defineImmutable(network, {
     name: data.name,
     alias: data.alias,
+    prefix: data.prefix,
     pubkeyhash: data.pubkeyhash,
     privatekey: data.privatekey,
     privatekeyOld: data.privatekeyOld,
@@ -9620,7 +9629,7 @@ Script.prototype.getPublicKey = function() {
 };
 
 Script.prototype.getPublicKeyHash = function() {
-  $.checkState(this.isPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
+  $.checkState(this.isWitnessPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
   return this.chunks[2].buf;
 };
 
@@ -10319,6 +10328,8 @@ Script.fromAddress = function(address) {
     return Script.buildPublicKeyHashOut(address);
   } else if (address.isPayToWitnessPublicKeyHash()) {
     return Script.buildWitnessV0Out(address);
+  } else if (address.isPayToWitnessScriptHash(address)){
+    return Script.buildPublicKeyHashOut(address);
   }
   throw new errors.Script.UnrecognizedAddress(address);
 };
@@ -61788,7 +61799,7 @@ exports.createContext = Script.createContext = function (context) {
 },{"indexof":170}],253:[function(require,module,exports){
 module.exports={
   "name": "digibyte",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "description": "A pure and powerful JavaScript DigiByte library.",
   "author": "DigiByte <dev@digibyte.co>",
   "main": "index.js",
