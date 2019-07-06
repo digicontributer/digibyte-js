@@ -324,12 +324,10 @@ Address._transformString = function(data, network, type) {
     var result = Bech32.decode(data);
     var version = result.shift();
     var buf = Bech32.fromWords(result);
-    var info = Address._transformBuffer(Buffer.from(buf), Networks.get(network || 'livenet'), type, Networks.get(network || 'livenet').prefix);
+    network = Networks.get(data.split('1')[0], 'prefix');
+    var info = Address._transformBuffer(Buffer.from(buf), network, type, network.prefix);
     return info;
   } catch (e) {
-    if(data === 'dgb1qhv27ve0hs94kz3k8ywxwd6522y04pdud3lq74k'){
-      console.log(Buffer.from(buf).toString('hex'))
-    }
     if (type === Address.PayToWitnessPublicKeyHash || type === Address.PayToWitnessScriptHash) {
       return e;
     }
@@ -9623,6 +9621,38 @@ Script.prototype.isPublicKeyHashIn = function() {
   return false;
 };
 
+/**
+ * @returns {boolean} if this is a pay to public key hash input script
+ */
+Script.prototype.isWitnessPublicKeyHashIn = function() {
+  console.log(this)
+  if (this.chunks.length === 2) {
+    var signatureBuf = this.chunks[0].buf;
+    var pubkeyBuf = this.chunks[1].buf;
+    console.log(signatureBuf &&
+      signatureBuf.length &&
+      signatureBuf[0] === 0x30 &&
+      pubkeyBuf &&
+      pubkeyBuf.length);
+    if (signatureBuf &&
+        signatureBuf.length &&
+        signatureBuf[0] === 0x30 &&
+        pubkeyBuf &&
+        pubkeyBuf.length
+       ) {
+      var version = pubkeyBuf[0];
+      if ((version === 0x04 ||
+           version === 0x06 ||
+           version === 0x07) && pubkeyBuf.length === 65) {
+        return true;
+      } else if ((version === 0x03 || version === 0x02) && pubkeyBuf.length === 33) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
 Script.prototype.getPublicKey = function() {
   $.checkState(this.isPublicKeyOut(), 'Can\'t retrieve PublicKey from a non-PK output');
   return this.chunks[0].buf;
@@ -10613,6 +10643,7 @@ Input.prototype.toObject = Input.prototype.toJSON = function toObject() {
     outputIndex: this.outputIndex,
     sequenceNumber: this.sequenceNumber,
     script: this._scriptBuffer.toString('hex'),
+    witnesses: this.witnesses
   };
   // add human readable form if input contains valid script
   if (this.script) {
@@ -11527,6 +11558,11 @@ WitnessPublicKeyHashInput.prototype.getScriptCode = function() {
   }
   return writer.toBuffer();
 };
+
+WitnessPublicKeyHashInput.prototype.isFullySigned = function() {
+  return true;
+};
+
 
 module.exports = WitnessPublicKeyHashInput;
 
@@ -12743,6 +12779,12 @@ Transaction.prototype.fromObject = function fromObject(arg) {
       );
     } else if (script.isPublicKeyOut()) {
       txin = new Input.PublicKey(input);
+    } else if (script.isWitnessPublicKeyHashOut()) {
+      txin = new Input.WitnessPublicKeyHash(input);
+    } else if (script.isWitnessScriptHashOut()) {
+      txin = new Input.WitnessScriptHash(
+        input, input.publicKeys, input.threshold, input.signatures
+      );
     } else {
       throw new errors.Transaction.Input.UnsupportedScript(input.output.script);
     }
@@ -13044,7 +13086,6 @@ Transaction.prototype._fromMultisigUtxo = function(utxo, pubkeys, threshold, nes
   } else {
     throw new Error("@TODO");
   }
-  console.log(clazz, 'class');
   this.addInput(new clazz({
     output: new Output({
       script: utxo.script,
@@ -13630,13 +13671,13 @@ Transaction.prototype.verify = function() {
     if (txout.invalidSatoshis()) {
       return 'transaction txout ' + i + ' satoshis is invalid';
     }
-    if (txout._satoshisBN.gt(new BN(Transaction.MAX_MONEY, 10))) {
-      return 'transaction txout ' + i + ' greater than MAX_MONEY';
-    }
-    valueoutbn = valueoutbn.add(txout._satoshisBN);
-    if (valueoutbn.gt(new BN(Transaction.MAX_MONEY))) {
-      return 'transaction txout ' + i + ' total output greater than MAX_MONEY';
-    }
+    //if (txout._satoshisBN.gt(new BN(Transaction.MAX_MONEY, 10))) {
+    //  return 'transaction txout ' + i + ' greater than MAX_MONEY';
+    //}
+    //valueoutbn = valueoutbn.add(txout._satoshisBN);
+    //if (valueoutbn.gt(new BN(Transaction.MAX_MONEY))) {
+    //  return 'transaction txout ' + i + ' total output greater than MAX_MONEY';
+    //}
   }
 
   // Size limits
@@ -61800,7 +61841,7 @@ exports.createContext = Script.createContext = function (context) {
 },{"indexof":170}],253:[function(require,module,exports){
 module.exports={
   "name": "digibyte",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "description": "A pure and powerful JavaScript DigiByte library.",
   "author": "DigiByte <dev@digibyte.co>",
   "main": "index.js",
