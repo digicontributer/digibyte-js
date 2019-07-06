@@ -10329,7 +10329,7 @@ Script.fromAddress = function(address) {
   } else if (address.isPayToWitnessPublicKeyHash()) {
     return Script.buildWitnessV0Out(address);
   } else if (address.isPayToWitnessScriptHash(address)){
-    return Script.buildPublicKeyHashOut(address);
+    return Script.buildWitnessV0Out(address);
   }
   throw new errors.Script.UnrecognizedAddress(address);
 };
@@ -13044,6 +13044,7 @@ Transaction.prototype._fromMultisigUtxo = function(utxo, pubkeys, threshold, nes
   } else {
     throw new Error("@TODO");
   }
+  console.log(clazz, 'class');
   this.addInput(new clazz({
     output: new Output({
       script: utxo.script,
