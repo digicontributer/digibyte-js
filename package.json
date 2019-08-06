@@ -1,6 +1,6 @@
 {
   "name": "digibyte",
-  "version": "0.15.5",
+  "version": "0.15.6",
   "description": "A pure and powerful JavaScript DigiByte library.",
   "author": "DigiByte <dev@digibyte.co>",
   "main": "index.js",
