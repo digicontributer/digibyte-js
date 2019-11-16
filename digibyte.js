@@ -75,7 +75,6 @@ function Address(data, network, type, legacy) {
     && type !== Address.PayToWitnessScriptHash)) {
     throw new TypeError('Third argument must be "pubkeyhash", "scripthash", "witnesspubkeyhash", or "witnessscripthash".');
   }
-
   var info = this._classifyArguments(data, network, type);
 
   // set defaults if not set
@@ -126,6 +125,8 @@ Address.PayToScriptHash = 'scripthash';
 Address.PayToWitnessPublicKeyHash = 'paytowitnesspublickeyhash';
 /** @static */
 Address.PayToWitnessScriptHash = 'paytowitnessscripthash';
+/** @static */
+Address.PayToPublicKey = 'publickey';
 
 /**
  * @param {Buffer} hash - An instance of a hash Buffer
@@ -225,9 +226,6 @@ Address._transformBuffer = function(buffer, network, type, prefix) {
   }
 
   if (!bufferVersion.network || (networkObj && networkObj !== bufferVersion.network)) {
-    if (buffer.toString('hex') === 'bb15e665f7816b6146c7238ce6ea8a511f50b78d') {
-      console.log(bufferVersion, networkObj, 'lsosl')
-    }
     throw new TypeError('Address has mismatched network type.');
   }
 
@@ -9670,15 +9668,9 @@ Script.prototype.isPublicKeyHashIn = function() {
  * @returns {boolean} if this is a pay to public key hash input script
  */
 Script.prototype.isWitnessPublicKeyHashIn = function() {
-  console.log(this)
   if (this.chunks.length === 2) {
     var signatureBuf = this.chunks[0].buf;
     var pubkeyBuf = this.chunks[1].buf;
-    console.log(signatureBuf &&
-      signatureBuf.length &&
-      signatureBuf[0] === 0x30 &&
-      pubkeyBuf &&
-      pubkeyBuf.length);
     if (signatureBuf &&
         signatureBuf.length &&
         signatureBuf[0] === 0x30 &&
@@ -9704,7 +9696,7 @@ Script.prototype.getPublicKey = function() {
 };
 
 Script.prototype.getPublicKeyHash = function() {
-  $.checkState(this.isWitnessPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
+  $.checkState(this.isPublicKeyHashOut(), 'Can\'t retrieve PublicKeyHash from a non-PKH output');
   return this.chunks[2].buf;
 };
 
@@ -9900,6 +9892,8 @@ Script.prototype.getData = function() {
   }
   if (this.isPublicKeyHashOut()) {
     return Buffer.from(this.chunks[2].buf);
+  } else if (this.isPublicKeyOut()) {
+    return Buffer.from(this.chunks[0].buf);
   }
   throw new Error('Unrecognized script type to get data from');
 };
@@ -10478,6 +10472,9 @@ Script.prototype._getInputAddressInfo = function() {
  * @return {Address|boolean} the associated address for this script if possible, or false
  */
 Script.prototype.toAddress = function(network) {
+  if (this.isPublicKeyOut()){
+    return new PublicKey(this.chunks[0].buf).toLegacyAddress();
+  }
   var info = this.getAddressInfo();
   if (!info) {
     return false;
@@ -31549,7 +31546,13 @@ utils.intFromLE = intFromLE;
 
 },{"bn.js":83,"minimalistic-assert":177,"minimalistic-crypto-utils":178}],151:[function(require,module,exports){
 module.exports={
-  "_from": "elliptic@=6.4.0",
+  "_args": [
+    [
+      "elliptic@6.4.0",
+      "E:\\developer\\digibyte\\digibyte-js"
+    ]
+  ],
+  "_from": "elliptic@6.4.0",
   "_id": "elliptic@6.4.0",
   "_inBundle": false,
   "_integrity": "sha1-ysmvh2LIWDYYcAPI3+GT5eLq5d8=",
@@ -31558,12 +31561,12 @@ module.exports={
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "elliptic@=6.4.0",
+    "raw": "elliptic@6.4.0",
     "name": "elliptic",
     "escapedName": "elliptic",
-    "rawSpec": "=6.4.0",
+    "rawSpec": "6.4.0",
     "saveSpec": null,
-    "fetchSpec": "=6.4.0"
+    "fetchSpec": "6.4.0"
   },
   "_requiredBy": [
     "/",
@@ -31571,9 +31574,8 @@ module.exports={
     "/create-ecdh"
   ],
   "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
-  "_shasum": "cac9af8762c85836187003c8dfe193e5e2eae5df",
-  "_spec": "elliptic@=6.4.0",
-  "_where": "/mnt/g/developer/digibyte/digiassets/digibyte-js",
+  "_spec": "6.4.0",
+  "_where": "E:\\developer\\digibyte\\digibyte-js",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -31581,7 +31583,6 @@ module.exports={
   "bugs": {
     "url": "https://github.com/indutny/elliptic/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "bn.js": "^4.4.0",
     "brorand": "^1.0.1",
@@ -31591,7 +31592,6 @@ module.exports={
     "minimalistic-assert": "^1.0.0",
     "minimalistic-crypto-utils": "^1.0.0"
   },
-  "deprecated": false,
   "description": "EC cryptography",
   "devDependencies": {
     "brfs": "^1.4.3",
@@ -54327,7 +54327,7 @@ module.exports.makeScheme = function (key, options) {
 
         /* Type 1: zeros padding for private key decrypt */
         if (options.type === 1) {
-            if (buffer[0] !== 0 && buffer[1] !== 1) {
+            if (buffer[0] !== 0 || buffer[1] !== 1) {
                 return null;
             }
             i = 3;
@@ -54338,7 +54338,7 @@ module.exports.makeScheme = function (key, options) {
             }
         } else {
             /* random padding for public key decrypt */
-            if (buffer[0] !== 0 && buffer[1] !== 2) {
+            if (buffer[0] !== 0 || buffer[1] !== 2) {
                 return null;
             }
             i = 3;
